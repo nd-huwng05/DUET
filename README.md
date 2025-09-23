@@ -1,1 +1,1 @@
-# DUET
+# DenseNet Uncertainty Ensemble Training

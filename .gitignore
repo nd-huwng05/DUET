@@ -205,3 +205,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+#dataset
+dataset/data/VinCXR/images
+dataset/data/RSNA/images
+dataset/data/LAG/images
+dataset/data/BrainTumor/images
+output/
