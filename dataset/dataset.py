@@ -23,7 +23,6 @@ class DatasetTemplate(Dataset):
 
         with open(os.path.join(self.root, "data.json")) as f:
             data_dict = json.load(f)
-        Logger.get_logger().info(f"Loading {mode} dataset from {self.root}")
 
         if mode == "train":
             train_list = data_dict["train"]["0"]

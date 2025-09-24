@@ -212,3 +212,4 @@ dataset/data/RSNA/images
 dataset/data/LAG/images
 dataset/data/BrainTumor/images
 output/
+pretrained/

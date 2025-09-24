@@ -121,10 +121,8 @@ class BottleNeck(nn.Module):
         x = x.view(x.size(0), -1)
         z = self.linear_enc(x)
         out = self.linear_dec(z)
-
         out = out.view(x.size(0), self.in_planes, self.feature_size, self.feature_size)
-
-        return {'out': out, 'z': z}
+        return out, z
 
 class ChannelAttention(nn.Module):
     def __init__(self, input_channels, reduction=16):

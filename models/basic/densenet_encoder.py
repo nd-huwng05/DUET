@@ -5,18 +5,18 @@ import torchvision.models as models
 
 class DenseNetEncoder(nn.Module):
     def __init__(self, image_size=128, in_channels=1, out_channels=256,
-                 pretrained=True, pretrained_idx=1):
+                 pretrained=True, pretrained_idx=0):
         super(DenseNetEncoder, self).__init__()
         self.image_size = image_size
         densenet121 = models.densenet121()
 
         if pretrained:
-            if pretrained_idx == 1:
+            if pretrained_idx == 0:
                 state_dict = torch.load("data/DenseNet121.pt", map_location="cpu")
                 if "state_dict" in state_dict:
                     state_dict = state_dict["state_dict"]
                 densenet121.load_state_dict(state_dict, strict=False)
-            elif pretrained_idx == 2:
+            elif pretrained_idx == 1:
                 densenet121 = xrv.models.DenseNet(weights="densenet121-res224-all")
             else:
                 densenet121 = models.densenet121(weights=models.DenseNet121_Weights.IMAGENET1K_V1)
