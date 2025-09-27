@@ -15,8 +15,14 @@ class Module:
         self.logger.set_log_file(self.config.OUTPUT.LOGS_TRAIN)
         self.logger.get_logger().info(f"Training started for {self.config.DATASET.NAME} dataset")
         self.trainer.train()
-        self.logger.get_logger().info("\n")
+        self.logger.get_logger().info("---------------------------------------------------------")
         self.logger.set_log_file(self.config.OUTPUT.LOGS_TEST)
+        # set_seed(self.config.TRAIN.SEED)
+        auc, ap = self.tester.inference()
+        return auc, ap
+
+    def inference(self):
         set_seed(self.config.TRAIN.SEED)
+        self.config.add("OUTPUT", "CHECKPOINT", self.config.OUTPUT.BEST)
         auc, ap = self.tester.inference()
         return auc, ap

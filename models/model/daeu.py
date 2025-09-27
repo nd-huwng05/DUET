@@ -4,8 +4,7 @@ from  models.basic.block import BottleNeck, ResBlock, BasicBlock
 class DAEU(nn.Module):
     def __init__(self, input_size=64, in_planes=1, base_width=16, expansion=1, mid_num=2048, latent_size=16,
                  en_num_layers=None, de_num_layers=None,residual=False, layer=4):
-        super(DAEU, self).__init__(input_size, in_planes, base_width, expansion, mid_num, latent_size, en_num_layers,
-                                  de_num_layers, residual, layer)
+        super(DAEU, self).__init__()
         block = ResBlock if residual else BasicBlock
         self.fm = input_size // 16  # down-sample for 4 times. 2^4=16
         self.layer = layer
@@ -36,18 +35,47 @@ class DAEU(nn.Module):
         self.de_block4 = block(1 * base_width * expansion,  2 * in_planes, 1, upsample=True,
                             last_layer=True)
 
+        for param in self.en_block1.parameters():
+            param.requires_grad = False
+        for param in self.en_block2.parameters():
+            param.requires_grad = False
+        for param in self.en_block3.parameters():
+            param.requires_grad = False
+
     def forward(self, x):
         en1 = self.en_block1(x)
         en2 = self.en_block2(en1)
         en3 = self.en_block3(en2)
         en4 = self.en_block4(en3)
 
-        bottle_out = self.bottle_neck(en4)
-        z, de1 = bottle_out['z'], bottle_out['out']
+        de1, z = self.bottle_neck(en4)
 
         de2 = self.de_block1(de1)
         de3 = self.de_block2(de2)
         de4 = self.de_block3(de3)
         x_hat, log_var = self.de_block4(de4).chunk(2, 1)
-        print(log_var)
         return  x_hat, log_var, z
+
+import torch
+if __name__ == '__main__':
+    # Giả sử input_size = 64, in_planes = 1
+    input_size = 64
+    batch_size = 2
+    channels = 1
+    height = width = input_size
+
+    # Tạo model
+    model = DAEU(input_size=input_size, in_planes=channels, latent_size=16, residual=False)
+
+    # Tạo input dummy
+    x = torch.randn(batch_size, channels, height, width)
+
+    # Forward pass
+    try:
+        x_hat, log_var, z = model(x)
+        print("Forward pass thành công!")
+        print("x_hat shape:", x_hat.shape)
+        print("log_var shape:", log_var.shape)
+        print("z shape:", z.shape)
+    except Exception as e:
+        print("Lỗi khi forward pass:", e)

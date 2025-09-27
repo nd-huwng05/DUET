@@ -12,14 +12,15 @@ class DenseNetEncoder(nn.Module):
 
         if pretrained:
             if pretrained_idx == 0:
-                state_dict = torch.load("data/DenseNet121.pt", map_location="cpu")
+                print("Loading pretrained densenet121...")
+                state_dict = torch.load("pretrained/DenseNet121.pt", map_location="cpu")
                 if "state_dict" in state_dict:
                     state_dict = state_dict["state_dict"]
                 densenet121.load_state_dict(state_dict, strict=False)
-            elif pretrained_idx == 1:
-                densenet121 = xrv.models.DenseNet(weights="densenet121-res224-all")
-            else:
-                densenet121 = models.densenet121(weights=models.DenseNet121_Weights.IMAGENET1K_V1)
+            # elif pretrained_idx == 1:
+            #     densenet121 = xrv.models.DenseNet(weights="densenet121-res224-all")
+            # else:
+            #     densenet121 = models.densenet121(weights=models.DenseNet121_Weights.IMAGENET1K_V1)
 
         if in_channels == 1:
             old_conv = densenet121.features.conv0

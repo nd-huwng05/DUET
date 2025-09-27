@@ -57,8 +57,6 @@ class Logger:
 
     @classmethod
     def set_log_file(cls, log_file: str):
-        if not os.path.exists(log_file):
-            os.makedirs(log_file)
         if cls._logger is None:
             raise RuntimeError("Logger is not initialized. Call Logger.init(log_file) first.")
         cls._setup_logger(log_file)

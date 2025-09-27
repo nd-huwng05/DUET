@@ -144,7 +144,10 @@ class ConvTransposeBnRelu(nn.Module):
     def __init__(self, input_channels, output_channels, kernel_size, stride=2, last_layer=False):
         super(ConvTransposeBnRelu, self).__init__()
         self.last_layer = last_layer
-        if stride != 2:     # ConvTranspose2d with factor = 4
+        if stride == 1:  # H, W
+            padding = (kernel_size - 1) // 2
+            output_padding = 0
+        elif stride != 2:     # ConvTranspose2d with factor = 4
             if kernel_size == 4:    # stride == 4
                 padding = 0
                 output_padding = 0

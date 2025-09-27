@@ -21,16 +21,30 @@ def loading_model(config, requires_grap=False):
 def load_models(config, requires_grap=False):
     models = []
     config.add("TRAIN", "INDEX", 0)
-    for state_dict in sorted(os.listdir(config.OUTPUT.CHECKPOINT), key=lambda x: int(x.split(".")[0])):
+
+    checkpoint_files = []
+    for f in os.listdir(config.OUTPUT.CHECKPOINT):
+        name = f.split(".")[0]
+        if name.isdigit() and f.endswith(".pth"):
+            checkpoint_files.append(f)
+
+    checkpoint_files = sorted(checkpoint_files, key=lambda x: int(x.split(".")[0]))
+
+    for state_dict in checkpoint_files:
         model = handler_model(config)
-        model.load_state_dict(torch.load(os.path.join(config.OUTPUT.CHECKPOINT, state_dict),
-                                         map_location=torch.device('cuda:{}'.format(config.GPUS))))
+        model.load_state_dict(
+            torch.load(
+                os.path.join(config.OUTPUT.CHECKPOINT, state_dict),
+                map_location=torch.device('cuda:{}'.format(config.GPUS))
+            )
+        )
         model.eval()
         if not requires_grap:
             for param in model.parameters():
                 param.requires_grad = False
         models.append(model)
         config.add("TRAIN", "INDEX", config.TRAIN.INDEX + 1)
+
     return models
 
 def set_seed(seed):

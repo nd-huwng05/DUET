@@ -1,3 +1,5 @@
+import os
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 import torch.nn as nn
 from models.basic.densenet_encoder import DenseNetEncoder
 from  models.basic.block import ConvTransposeBnRelu, BottleNeck
@@ -21,8 +23,13 @@ class DUET(nn.Module):
                                               kernel_size=4, stride=2))
             self.in_channels_decoder = self.out_channels_decoder
             self.out_channels_decoder = self.out_channels_decoder // 2
-        blocks.append(ConvTransposeBnRelu(input_channels=self.in_channels_decoder,
+        if out_channels_pre != 1024:
+            blocks.append(ConvTransposeBnRelu(input_channels=self.in_channels_decoder,
                                           output_channels=2 * out_channels, kernel_size=3, stride=2, last_layer=True))
+        else:
+            blocks.append(ConvTransposeBnRelu(input_channels=self.in_channels_decoder,
+                                        output_channels=2 * out_channels, kernel_size=3, stride=1, last_layer=True))
+
         self.decoder = nn.ModuleList(blocks)
 
     def forward(self, x):
