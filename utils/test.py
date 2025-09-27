@@ -36,7 +36,7 @@ class InferenceGrad:
                 log_var = torch.clamp(log_var, min=-10, max=10)
                 rec_err = (x - x_hat)**2
                 loss = torch.mean(torch.exp(-log_var) * rec_err)
-                gradient = torch.autograd.grad(torch.mean(loss), x)[0].squeeze(0)
+                gradient = torch.autograd.grad(loss, x)[0].squeeze(0)
                 grad_rec = torch.abs(x_hat - x) * gradient
 
                 grad_recs.append(grad_rec)
